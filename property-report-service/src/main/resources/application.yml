@@ -5,17 +5,17 @@ spring:
     openfeign:
       client:
         config:
-          land-registry: # ??? Feign Client? ??(name)
-            connectTimeout: 2000 # ?? ?? ???? (ms)
-            readTimeout : 1000    # ??? ?? ???? (ms)
+          land-registry: # Name of the Feign Client to configure
+            connectTimeout: 2000 # Connection attempt timeout (ms)
+            readTimeout : 1000    # read timeout (ms)
 
       circuitbreaker:
-        enabled: true # Feign? ?? ???? ?? ???
+        enabled: true # # Enable circuit breaker feature for Feign
 
 server:
   port: 8080
 
-# Resilience4j ??
+# Resilience4j Configuration
 resilience4j:
   circuitbreaker:
     configs:
@@ -27,12 +27,12 @@ resilience4j:
         wait-duration-in-open-state: 10s
         failure-rate-threshold: 50
     instances:
-      # ??? API? '?? ??'? ??? ???? ??
+      # Land Registry API policy considers 'slow calls' as failures
       land-registry:
         base-config: default
-        slow-call-rate-threshold: 50 # ?? ?? ??? 50% ???? ?? OPEN
-        slow-call-duration-threshold: 700ms # 700ms ?? ??? ?? ??? ??
-      # ???? API? '?? ??'? ??? ???? ??
+        slow-call-rate-threshold: 50 # Circuit OPEN if slow call rate exceeds 50%
+        slow-call-duration-threshold: 700ms # Calls over 700ms are considered slow
+      # Startup API policy considers 'exceptions' as failures
       market-price:
         base-config: default
-        failure-rate-threshold: 50 # ?? ???? 50% ???? ?? OPEN
+        failure-rate-threshold: 50 # Circuit OPEN if exception rate exceeds 50%
