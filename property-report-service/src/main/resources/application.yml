@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: property-report-service
+  cloud:
+    openfeign:
+      client:
+        config:
+          land-registry: # ??? Feign Client? ??(name)
+            connectTimeout: 2000 # ?? ?? ???? (ms)
+            readTimeout : 1000    # ??? ?? ???? (ms)
+
+      circuitbreaker:
+        enabled: true # Feign? ?? ???? ?? ???
+
+server:
+  port: 8080
+
+# Resilience4j ??
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        permitted-number-of-calls-in-half-open-state: 3
+        wait-duration-in-open-state: 10s
+        failure-rate-threshold: 50
+    instances:
+      # ??? API? '?? ??'? ??? ???? ??
+      land-registry:
+        base-config: default
+        slow-call-rate-threshold: 50 # ?? ?? ??? 50% ???? ?? OPEN
+        slow-call-duration-threshold: 700ms # 700ms ?? ??? ?? ??? ??
+      # ???? API? '?? ??'? ??? ???? ??
+      market-price:
+        base-config: default
+        failure-rate-threshold: 50 # ?? ???? 50% ???? ?? OPEN

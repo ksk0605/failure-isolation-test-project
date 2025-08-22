@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: external-api-simulator
+
+server:
+  port: 8081
